@@ -36,6 +36,18 @@
 		                responsive: true,
 		                plugins: {
 		                    legend: { position: "bottom" }
+		                },
+		                onClick: function(event, elements) {
+		                    if (elements.length > 0) {
+		                        // Obtendo o índice do segmento clicado
+		                        const elementIndex = elements[0].index;
+		                        // Obtendo o status correspondente ao índice
+		                        console.log({elementIndex, chartData, elements})
+		                        const selectedStatus = chartData.statuses[elementIndex];
+		                        
+		                        // Redirecionando para a página de filtros com o status clicado
+		                        window.open(`/filtros?status=${selectedStatus}`, '_blank');
+		                    }
 		                }
 		            }
 		        });

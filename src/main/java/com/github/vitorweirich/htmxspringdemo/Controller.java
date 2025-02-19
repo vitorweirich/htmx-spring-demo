@@ -19,6 +19,7 @@ public class Controller {
 	public String home(Model model) {
 		Map<String, Object> skus = new LinkedHashMap<>();
         skus.put("labels", List.of("Com Erro", "Com Sucesso", "Incompletas"));
+        skus.put("statuses", List.of("FINISHED_WITH_ERROR", "FINISHED_WITH_SUCCESS", "UNCOMPLETED"));
         skus.put("data", List.of(2138, 2138, 2138));
         skus.put("colors", List.of("#FF6384", "#4CAF50", "#FFC107"));
 
@@ -36,7 +37,10 @@ public class Controller {
 	    model.addAttribute("pagination", Map.of("totalPages", 12));
 
 	    if ("true".equals(htmxHeader)) {
-	    	List<Object> filteredSkus = List.of(Map.of("productId", 123, "skuId", 456, "sellerId", "CSB", "status", "PENDING"));
+	    	List<Object> filteredSkus = List.of(
+	    			Map.of("productId", 345, "skuId", 645, "sellerId", "CSB", "status", "UNCOMPLETED"),
+	    			Map.of("productId", 123, "skuId", 456, "sellerId", "CSB", "status", "PENDING")
+	    			);
 	    	model.addAttribute("skus", filteredSkus);  // Preenche os filtros
             return "filtros :: skuCards";
         }

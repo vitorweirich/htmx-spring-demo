@@ -20,6 +20,7 @@ public class HtmxSpringDemoApplication {
 	    thymeleafViewResolver.setTemplateEngine( templateEngine );
 	    thymeleafViewResolver.setCharacterEncoding( "UTF-8" );
 	    thymeleafViewResolver.addStaticVariable( "queryHelper", new QueryParamsHelper() );
+	    thymeleafViewResolver.addStaticVariable( "jsonHelper", new JsonHelper() );
 	    return thymeleafViewResolver;
 	}
 

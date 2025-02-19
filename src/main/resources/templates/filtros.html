@@ -2,6 +2,8 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{template.html}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
     <head>
        <title>Skus</title>
+       <link th:rel="stylesheet" th:href="@{/highlight/styles/monokai.min.css}">
+       <script defer src="/highlight/highlight.min.js"></script>
     </head>
     <body>
         <section layout:fragment="content">
@@ -34,6 +36,18 @@
 				        </div>
 				
 				        <div class="mb-3">
+				            <label for="status" class="form-status">Status:</label>
+				            <select id="status" name="status" class="form-select">
+				            	<option value="" th:selected="${queryParamsMap['status'] == ''}">- Escolha um status</option>
+				                <option value="PENDING" th:selected="${queryParamsMap['status'] == 'PENDING'}">Pendente</option>
+				                <option value="FINISHED_WITH_SUCCESS" th:selected="${queryParamsMap['status'] == 'FINISHED_WITH_SUCCESS'}">Finalizado com sucesso</option>
+				                <option value="FINISHED_WITH_ERROR" th:selected="${queryParamsMap['status'] == 'FINISHED_WITH_ERROR'}">Finalizado com erros</option>
+				                <option value="UNCOMPLETED" th:selected="${queryParamsMap['status'] == 'UNCOMPLETED'}">Incompletos</option>
+				                
+				            </select>
+				        </div>
+				        
+				        <div class="mb-3">
 				            <label for="sorting" class="form-label">Ordenação:</label>
 				            <select id="sorting" name="sorting" class="form-select">
 				                <option value="Ascendente" th:selected="${queryParamsMap['sorting'] == 'Ascendente'}">Ascendente</option>
@@ -54,10 +68,26 @@
 		                    <div th:each="sku : ${skus}">
 		                        <div class="card mb-3">
 		                            <div class="card-body">
-		                                <h5 class="card-title" th:text="${sku.productId}"></h5>
-		                                <p class="card-text" th:text="'SKU ID: ' + ${sku.skuId}"></p>
-		                                <p class="card-text" th:text="'Seller ID: ' + ${sku.sellerId}"></p>
-		                                <p class="card-text" th:text="'Status: ' + ${sku.status}"></p>
+		                            	<div class="d-flex flex-row justify-content-between">
+		                            		<div>
+				                                <h5 class="card-title" th:text="${sku.productId}"></h5>
+				                                <p class="card-text" th:text="'SKU ID: ' + ${sku.skuId}"></p>
+				                                <p class="card-text" th:text="'Seller ID: ' + ${sku.sellerId}"></p>
+				                                <p class="card-text" th:text="'Status: ' + ${sku.status}"></p>
+		                            		</div>
+		                            		<div class="d-flex flex-column gap-3 align-self-center">
+				                                <button class="btn btn-outline-primary"
+				                                		th:id="${sku.skuId + '-json-button'}"
+							                            th:attr="data-sku=${jsonHelper.convertToJson(sku)}" 
+							                            onclick="copyJSON(this)">
+							                        Copiar JSON
+							                    </button>
+							                    <button class="btn btn-outline-success"
+				                                		th:attr="json-button-id=${sku.skuId + '-json-button'}" th:onclick="maximizeJSON(this)">
+							                        Visualizar JSON
+							                    </button>
+		                            		</div>
+		                            	</div>
 		                            </div>
 		                        </div>
 		                    </div>
@@ -66,6 +96,107 @@
 		            </div>
 		        </div>
 		    </div>
+		    <!-- Modal para exibir o JSON expandido -->
+			<div class="modal" tabindex="-1" id="jsonModal" style="display: none;">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title">JSON da SKU</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body">
+        				<div id="jsonModalContent"></div>
+			      </div>
+			      <div class="modal-footer">
+			      <button class="btn btn-outline-primary"
+                   		id="modal-footer-copy-json"
+                      	onclick="copyJSON(this)">
+                        Copiar JSON
+                    </button>
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		    
+			<script th:inline="javascript">
+				function copyJSON(button) {
+			        console.log('copyJSON', {id: button.id, 'json-button-id': button.getAttribute('json-button-id'), button} );
+			        // Pegando o JSON da SKU armazenado no atributo data-sku do botão
+			        const skuJSON = button.id === 'modal-footer-copy-json' ?
+			        		document.getElementById(button.getAttribute('json-button-id')).getAttribute('data-sku')
+			        		: button.getAttribute('data-sku');
+			        		
+			        console.log('copyJSON', {skuJSON} );
+			        
+			        navigator.clipboard.writeText(skuJSON).then(function() {
+			            alert('JSON copiado com sucesso!');
+			        }, function(err) {
+			            alert('Erro ao copiar JSON: ', err);
+			        });
+		
+// 			        // Criando um textarea temporário para copiar o conteúdo
+// 			        const textarea = document.createElement('textarea');
+// 			        textarea.value = skuJSON;
+// 			        document.body.appendChild(textarea);
+		
+// 			        // Selecionando e copiando o texto
+// 			        textarea.select();
+// 			        document.execCommand('copy');
+		
+// 			        // Removendo o textarea temporário
+// 			        document.body.removeChild(textarea);
+		
+// 			        // Opcional: Alerta ou feedback visual
+// 			        alert('JSON copiado com sucesso!');
+			    }
+				
+				function maximizeJSON(button) {
+					const jsonButtonId = button.getAttribute('json-button-id');
+					document.getElementById('modal-footer-copy-json').setAttribute('json-button-id', jsonButtonId);
+				    
+				    const skuJSON = document.getElementById(jsonButtonId).getAttribute('data-sku')
+
+				    // Abrir modal
+				    const modal = new bootstrap.Modal(document.getElementById('jsonModal'));
+
+				    // Encontrar o container onde vamos inserir o conteúdo JSON
+				    const jsonModalContentContainer = document.getElementById('jsonModalContent');
+				    
+				    // Limpar qualquer conteúdo anterior (se houver)
+				    jsonModalContentContainer.innerHTML = '';
+
+				    // Criar o elemento <pre> e <code>
+				    const preElement = document.createElement('pre');
+				    const codeElement = document.createElement('code');
+
+				    // Adicionar as classes necessárias para o highlight.js e formato JSON
+				    codeElement.classList.add('json');
+
+				    // Adicionar o conteúdo JSON ao <code>
+				    codeElement.textContent = skuJSON;
+
+				    // Adicionar o <code> dentro do <pre>
+				    preElement.appendChild(codeElement);
+
+				    // Adicionar o <pre> ao container
+				    jsonModalContentContainer.appendChild(preElement);
+
+				    // Aplicar o destaque no conteúdo com highlight.js
+				    hljs.highlightElement(codeElement);
+
+				    // Mostrar o modal
+				    modal.show();
+				}
+			</script>
+			
+			<style>
+			    .json {
+			        cursor: pointer;
+			        resize: none;
+			        
+			    }
+			</style>
 		</section>
     </body>
 </html>
