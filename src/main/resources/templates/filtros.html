@@ -1,0 +1,85 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{template.html}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+    <head>
+       <title>Skus</title>
+       
+       <script>
+	        // Função para filtrar campos vazios e atualizar a URL
+	        function filterEmptyFieldsAndSubmit(event) {
+	        	event.preventDefault();
+
+	            // Obtendo todos os campos de entrada do formulário
+	            const formElements = event.target.elements;
+	            
+	            // Percorrendo os campos e removendo os campos vazios
+	            for (let i = 0; i < formElements.length; i++) {
+	              const input = formElements[i];
+	              
+	              // Verificando se o campo tem um valor
+	              if (!input.value.trim()) {
+	                // Se não tiver valor, removemos o campo do formulário
+	                input.name = ''; // O nome é apagado para que o campo não seja enviado
+	              }
+	            }
+
+	            // Agora, enviamos o formulário com os campos preenchidos
+	            event.target.submit();
+	        }
+	    </script>
+    </head>
+    <body>
+        <section layout:fragment="content">
+        	<div class="container mt-4">
+			    <div class="row">
+			        <!-- Coluna para os filtros -->
+			        <div class="col-md-3">
+			            <h4>Filtros</h4>
+			           <form id="filterForm" th:action="@{/filtros}" method="post" onsubmit="filterEmptyFieldsAndSubmit(event)" hx-target="#skuCards" hx-swap="outerHTML">
+							    <div>
+							        <label for="skuIds">Ids de SKU:</label>
+							        <input type="text" id="skuIds" name="skuIds" th:value="${param.skuIds}" />
+							    </div>
+							    <div>
+							        <label for="productIds">Ids de Produto:</label>
+							        <input type="text" id="productIds" name="productIds" th:value="${param.productIds}" />
+							    </div>
+							    <div>
+							        <label for="sellerId">Id do Seller:</label>
+							        <input type="text" id="sellerId" name="sellerId" th:value="${param.sellerId}" />
+							    </div>
+							    <div>
+							        <label for="sorting">Ordenação:</label>
+							        <select id="sorting" name="sorting" th:value="${param.sorting}">
+							            <option value="Descendente">Descendente</option>
+							            <option value="Ascendente">Ascendente</option>
+							        </select>
+							    </div>
+							    <div>
+						        <button type="submit">Aplicar Filtros</button>
+						    </div>
+						</form>
+			        </div>
+			
+			        <!-- Coluna para os cards de SKUs -->
+			        <div class="col-md-9">
+	                <h4>SKUs Encontradas</h4>
+	                <th:block th:fragment="skuCards">
+	                    <!-- Aqui os cards das SKUs serão gerados com base nos filtros -->
+	                    <div th:each="sku : ${skus}">
+	                        <div class="card mb-3">
+	                            <div class="card-body">
+	                                <h5 class="card-title" th:text="${sku.productId}"></h5>
+	                                <p class="card-text" th:text="'SKU ID: ' + ${sku.skuId}"></p>
+	                                <p class="card-text" th:text="'Seller ID: ' + ${sku.sellerId}"></p>
+	                                <p class="card-text" th:text="'Status: ' + ${sku.status}"></p>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </th:block>
+	            </div>
+			    </div>
+			</div>
+
+    	</section>
+    </body>
+</html>
