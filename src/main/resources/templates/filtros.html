@@ -30,7 +30,7 @@
 				        hx-trigger="submit" 
 				        hx-get="/filtros" 
 				        hx-target="#skuCards" 
-				        hx-swap="innerHTML" 
+				        hx-swap="outerHTML" 
 				        hx-push-url="true" 
 				        hx-headers='{"HX-Partial-Request": "true"}'>
 				        
@@ -78,7 +78,7 @@
 		            <div class="col-md-9">
 		                <h4>SKUs Encontradas</h4>
 		                <!-- Fragmento de SKUs, que será substituído -->
-		                <div id="skuCards" th:fragment="skuCards">
+		                <div class="sku-cards-container" id="skuCards" th:fragment="skuCards">
 		                    <div th:each="sku : ${skus}">
 		                        <div class="card mb-3">
 		                            <div class="card-body">

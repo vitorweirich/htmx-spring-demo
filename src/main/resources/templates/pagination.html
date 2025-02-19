@@ -1,7 +1,7 @@
 <div th:fragment="pagination(page)" class="d-flex justify-content-center mt-3">
 	<style>
 		/* Itens inativos (padrão) */
-		.page-item:not(.active) .page-link {
+		.page-item:not(.active):not(.disabled) .page-link {
 		  color: #1e7e34 !important;  /* Verde escuro */
 		  background: #ffffff !important; /* Fundo branco */
 		  border: 1px solid #1e7e34 !important; /* Borda verde escura */
@@ -28,7 +28,7 @@
             th:href="${queryHelper.toPage(prevPage)}"
             th:attr="hx-get=@{${queryHelper.toPage(prevPage)}}"
             hx-target="#skuCards"
-            hx-swap="innerHTML"
+            hx-swap="outerHTML"
             hx-push-url="true"
             hx-headers='{"HX-Partial-Request": "true"}'
           >
@@ -42,7 +42,7 @@
             th:href="${queryHelper.toPage(0)}"
             th:attr="hx-get=@{${queryHelper.toPage(0)}}"
             hx-target="#skuCards"
-            hx-swap="innerHTML"
+            hx-swap="outerHTML"
             hx-push-url="true"
             hx-headers='{"HX-Partial-Request": "true"}'
           >
@@ -74,7 +74,7 @@
               th:href="${queryHelper.toPage(i)}"
               th:attr="hx-get=@{${queryHelper.toPage(i)}}"
               hx-target="#skuCards"
-              hx-swap="innerHTML"
+              hx-swap="outerHTML"
               hx-push-url="true"
               hx-headers='{"HX-Partial-Request": "true"}'
             >
@@ -93,7 +93,7 @@
             th:href="${queryHelper.toPage(page.totalPages -1)}"
             th:attr="hx-get=@{${queryHelper.toPage(page.totalPages -1)}}"
             hx-target="#skuCards"
-            hx-swap="innerHTML"
+            hx-swap="outerHTML"
             hx-push-url="true"
             th:text="${page.totalPages}"
             hx-headers='{"HX-Partial-Request": "true"}'
@@ -111,7 +111,7 @@
             th:href="${queryHelper.toPage(nextPage)}"
             th:attr="hx-get=@{${queryHelper.toPage(nextPage)}}"
             hx-target="#skuCards"
-            hx-swap="innerHTML"
+            hx-swap="outerHTML"
             hx-push-url="true"
             hx-headers='{"HX-Partial-Request": "true"}'
           >
