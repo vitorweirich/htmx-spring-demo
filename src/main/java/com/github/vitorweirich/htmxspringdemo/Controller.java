@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -30,34 +30,23 @@ public class Controller {
 	}
 	
 	@GetMapping("/filtros")
-    public String filtros(@RequestParam Map<String, String> filters, Model model) {
-        List<Object> filteredSkus = Collections.emptyList();
+	public String filtros(@RequestParam Map<String, String> filters, @RequestHeader(value = "HX-Partial-Request", required = false) String htmxHeader, Model model) {
+	    List<Object> skus = Collections.emptyList();  // Inicialmente, sem SKUs filtradas
+	    
+	    model.addAttribute("pagination", Map.of("totalPages", 12));
 
-        // Passa os filtros para preencher os campos e as SKUs filtradas para exibir
-        model.addAttribute("filters", filters);  // Para poder preencher os campos de filtro
-        model.addAttribute("skus", filteredSkus);  // Passa as SKUs filtradas para a página
-        
-        this.addCommonAttrs(model);
+	    if ("true".equals(htmxHeader)) {
+	    	List<Object> filteredSkus = List.of(Map.of("productId", 123, "skuId", 456, "sellerId", "CSB", "status", "PENDING"));
+	    	model.addAttribute("skus", filteredSkus);  // Preenche os filtros
+            return "filtros :: skuCards";
+        }
+	    
+	    model.addAttribute("skus", skus);  // Passa as SKUs para a página
+	    model.addAttribute("filters", filters);  // Preenche os filtros
+	    this.addCommonAttrs(model);
+	    return "filtros";  // Retorna a página completa
+	}
 
-        return "filtros";  // Nome da página HTML que será renderizada
-    }
-	
-	@PostMapping("/filtros")
-    public String filtrosWithFilters(@RequestParam Map<String, String> filters, Model model) {
-        List<Object> filteredSkus = List.of(Map.of("productId", 123, "skuId" , 456, "sellerId", "CSB", "status", "PENDING"));
-        
-        System.out.println();
-        System.out.println(filters);
-        System.out.println();
-
-        // Passa os filtros para preencher os campos e as SKUs filtradas para exibir
-        model.addAttribute("filters", filters);  // Para poder preencher os campos de filtro
-        model.addAttribute("skus", filteredSkus);  // Passa as SKUs filtradas para a página
-        
-        this.addCommonAttrs(model);
-
-        return "filtros";  // Nome da página HTML que será renderizada
-    }
 	
 	private void addCommonAttrs(Model model) {
 		model.addAttribute("time", Instant.now());

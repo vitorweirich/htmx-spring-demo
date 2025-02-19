@@ -1,0 +1,44 @@
+<div th:fragment="pagination(page)" class="d-flex justify-content-center mt-3">
+    <nav aria-label="Navegação da página">
+        <ul class="pagination" th:with="currentPage=${queryHelper.getCurrentPage(queryParamsMap)}, prevPage=${currentPage - 1}, nextPage=${currentPage + 1}">
+
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+				   th:href="${queryHelper.toPage(prevPage)}"
+				   th:attr="hx-get=@{${queryHelper.toPage(prevPage)}}"
+				   hx-target="#skuCards"
+				   hx-swap="innerHTML"
+				   hx-push-url="true"
+				   hx-headers='{"HX-Partial-Request": "true"}'>
+				    Anterior
+				</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}" 
+                class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="${queryHelper.toPage(i)}"
+				   th:attr="hx-get=@{${queryHelper.toPage(i)}}"
+                   hx-target="#skuCards"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   hx-headers='{"HX-Partial-Request": "true"}'>
+                </a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage == page.totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="${queryHelper.toPage(nextPage)}"
+				   th:attr="hx-get=@{${queryHelper.toPage(nextPage)}}"
+                   hx-target="#skuCards"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   hx-headers='{"HX-Partial-Request": "true"}'>
+                    Próximo
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>

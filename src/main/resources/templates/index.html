@@ -14,7 +14,9 @@
 		</div>
         
         <script th:inline="javascript">
-	        var chartData = [[${chartData}]];
+	        /*<![CDATA[*/
+	        var chartData = /*[[${chartData}]]*/
+	    	/*]]>*/
 	    	
 	    	document.addEventListener("DOMContentLoaded", function() {
 		        const ctx = document.getElementById("skuChart").getContext("2d");
