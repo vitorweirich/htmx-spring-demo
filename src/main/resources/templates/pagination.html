@@ -1,44 +1,124 @@
 <div th:fragment="pagination(page)" class="d-flex justify-content-center mt-3">
-    <nav aria-label="Navegação da página">
-        <ul class="pagination" th:with="currentPage=${queryHelper.getCurrentPage(queryParamsMap)}, prevPage=${currentPage - 1}, nextPage=${currentPage + 1}">
+	<style>
+		/* Itens inativos (padrão) */
+		.page-item:not(.active) .page-link {
+		  color: #1e7e34 !important;  /* Verde escuro */
+		  background: #ffffff !important; /* Fundo branco */
+		  border: 1px solid #1e7e34 !important; /* Borda verde escura */
+		}
+		
+		/* Itens ativos (selecionados) */
+		.page-item.active .page-link {
+		  color: #ffffff !important; /* Texto branco */
+		  background: #18632a !important; /* Verde mais fechado */
+		  border: 1px solid #124d20 !important; /* Verde ainda mais escuro para profundidade */
+		}
+	
+	</style>
 
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link"
-				   th:href="${queryHelper.toPage(prevPage)}"
-				   th:attr="hx-get=@{${queryHelper.toPage(prevPage)}}"
-				   hx-target="#skuCards"
-				   hx-swap="innerHTML"
-				   hx-push-url="true"
-				   hx-headers='{"HX-Partial-Request": "true"}'>
-				    Anterior
-				</a>
-            </li>
+  <nav aria-label="Navegação da página">
+    <ul
+      class="pagination gap-3 flex-wrap"
+      th:with="currentPage=${queryHelper.getCurrentPage(queryParamsMap)}, prevPage=${currentPage - 1}, nextPage=${currentPage + 1}"
+    >
+      <div class="d-flex gap-1">
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+          <a
+            class="page-link"
+            th:href="${queryHelper.toPage(prevPage)}"
+            th:attr="hx-get=@{${queryHelper.toPage(prevPage)}}"
+            hx-target="#skuCards"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            hx-headers='{"HX-Partial-Request": "true"}'
+          >
+            Anterior
+          </a>
+        </li>
 
-            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}" 
-                class="page-item" th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link"
-                   th:text="${i + 1}"
-                   th:href="${queryHelper.toPage(i)}"
-				   th:attr="hx-get=@{${queryHelper.toPage(i)}}"
-                   hx-target="#skuCards"
-                   hx-swap="innerHTML"
-                   hx-push-url="true"
-                   hx-headers='{"HX-Partial-Request": "true"}'>
-                </a>
-            </li>
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'active' : 'btn-info'">
+          <a
+            class="page-link"
+            th:href="${queryHelper.toPage(0)}"
+            th:attr="hx-get=@{${queryHelper.toPage(0)}}"
+            hx-target="#skuCards"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            hx-headers='{"HX-Partial-Request": "true"}'
+          >
+            1
+          </a>
+        </li>
+      </div>
 
-            <li class="page-item" th:classappend="${currentPage == page.totalPages - 1} ? 'disabled'">
-                <a class="page-link"
-                   th:href="${queryHelper.toPage(nextPage)}"
-				   th:attr="hx-get=@{${queryHelper.toPage(nextPage)}}"
-                   hx-target="#skuCards"
-                   hx-swap="innerHTML"
-                   hx-push-url="true"
-                   hx-headers='{"HX-Partial-Request": "true"}'>
-                    Próximo
-                </a>
-            </li>
+      <th:block
+        th:with="
+                            maxVisible=10,
+                            startPage=${currentPage <= maxVisible/2 ? 1 : currentPage - maxVisible/2},
+                            endPage=${currentPage >= page.totalPages - maxVisible/2 ? page.totalPages : currentPage + maxVisible/2},
+                            startPage=${startPage < 1 ? 1 : startPage},
+                            endPage=${endPage > page.totalPages - 2 ? page.totalPages - 2 : endPage}"
+      >
+        <div
+          th:if="${startPage < endPage}"
+          class="d-flex align-self-center gap-1 flex-wrap"
+        >
+          <li
+            class="page-item"
+            th:classappend="${i == currentPage} ? 'active'"
+            th:each="i : ${#numbers.sequence(startPage, endPage)}"
+          >
+            <a
+              class="page-link"
+              th:text="${i + 1}"
+              th:href="${queryHelper.toPage(i)}"
+              th:attr="hx-get=@{${queryHelper.toPage(i)}}"
+              hx-target="#skuCards"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              hx-headers='{"HX-Partial-Request": "true"}'
+            >
+            </a>
+          </li>
+        </div>
+      </th:block>
 
-        </ul>
-    </nav>
+      <div class="d-flex gap-1">
+        <li
+          class="page-item"
+          th:classappend="${currentPage == page.totalPages - 1} ? 'active'"
+        >
+          <a
+            class="page-link"
+            th:href="${queryHelper.toPage(page.totalPages -1)}"
+            th:attr="hx-get=@{${queryHelper.toPage(page.totalPages -1)}}"
+            hx-target="#skuCards"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            th:text="${page.totalPages}"
+            hx-headers='{"HX-Partial-Request": "true"}'
+          >
+            Útltimo
+          </a>
+        </li>
+
+        <li
+          class="page-item"
+          th:classappend="${currentPage == page.totalPages - 1} ? 'disabled'"
+        >
+          <a
+            class="page-link"
+            th:href="${queryHelper.toPage(nextPage)}"
+            th:attr="hx-get=@{${queryHelper.toPage(nextPage)}}"
+            hx-target="#skuCards"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            hx-headers='{"HX-Partial-Request": "true"}'
+          >
+            Próximo
+          </a>
+        </li>
+      </div>
+    </ul>
+  </nav>
 </div>

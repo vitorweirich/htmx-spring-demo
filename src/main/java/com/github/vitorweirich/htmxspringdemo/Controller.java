@@ -34,7 +34,7 @@ public class Controller {
 	public String filtros(@RequestParam Map<String, String> filters, @RequestHeader(value = "HX-Partial-Request", required = false) String htmxHeader, Model model) {
 	    List<Object> skus = Collections.emptyList();  // Inicialmente, sem SKUs filtradas
 	    
-	    model.addAttribute("pagination", Map.of("totalPages", 12));
+	    model.addAttribute("pagination", Map.of("totalPages", 67));
 
 	    if ("true".equals(htmxHeader)) {
 	    	List<Object> filteredSkus = List.of(

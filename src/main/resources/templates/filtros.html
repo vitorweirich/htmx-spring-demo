@@ -4,6 +4,20 @@
        <title>Skus</title>
        <link th:rel="stylesheet" th:href="@{/highlight/styles/monokai.min.css}">
        <script defer src="/highlight/highlight.min.js"></script>
+       <style>
+       	.btn-outline-custom {
+		  color: #b144bd !important; /* Cor do texto */
+		  border: 2px solid #b144bd !important; /* Borda na cor desejada */
+		  background-color: transparent !important; /* Fundo transparente */
+		  transition: all 0.3s ease-in-out; /* Transição suave */
+		}
+		
+		/* Efeito ao passar o mouse */
+		.btn-outline-custom:hover {
+		  background-color: #b144bd !important; /* Fundo preenchido ao passar o mouse */
+		  color: #ffffff !important; /* Texto branco */
+		}
+       </style>
     </head>
     <body>
         <section layout:fragment="content">
@@ -82,7 +96,7 @@
 							                            onclick="copyJSON(this)">
 							                        Copiar JSON
 							                    </button>
-							                    <button class="btn btn-outline-success"
+							                    <button class="btn btn-outline-custom"
 				                                		th:attr="json-button-id=${sku.skuId + '-json-button'}" th:onclick="maximizeJSON(this)">
 							                        Visualizar JSON
 							                    </button>
