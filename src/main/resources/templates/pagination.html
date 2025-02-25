@@ -36,7 +36,7 @@
           </a>
         </li>
 
-        <li class="page-item" th:classappend="${currentPage == 0} ? 'active' : 'btn-info'">
+        <li th:if="${page.totalPages > 1}" class="page-item" th:classappend="${currentPage == 0} ? 'active' : 'btn-info'">
           <a
             class="page-link"
             th:href="${queryHelper.toPage(0)}"
@@ -60,7 +60,7 @@
                             endPage=${endPage > page.totalPages - 2 ? page.totalPages - 2 : endPage}"
       >
         <div
-          th:if="${startPage < endPage}"
+          th:if="${startPage <= endPage}"
           class="d-flex align-self-center gap-1 flex-wrap"
         >
           <li
@@ -85,6 +85,7 @@
 
       <div class="d-flex gap-1">
         <li
+          th:if="${page.totalPages > 1}"
           class="page-item"
           th:classappend="${currentPage == page.totalPages - 1} ? 'active'"
         >
